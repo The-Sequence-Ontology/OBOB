@@ -1,0 +1,56 @@
+[% WRAPPER main.tt %]
+
+[% IF term %]
+  [% treeview_params = treeview_params _ "&term_acc=" _ term.acc %]
+[% END %]
+
+<script type="text/javascript">
+$(document).ready(function(){
+	
+	//Build the main treeview
+	//$("#treeview_async").Nodes(0).Expanded = True;
+	
+	$("#treeview_async").treeview({
+	    url: '/[% cgi_path %]/obob.cgi?rm=async_treeview_json&release=[% active_release %][% treeview_params %]'
+	});
+
+	//Build the obsolete terms tree
+	$("#treeview_obsolete").treeview({
+	    url: '/[% cgi_path %]/obob.cgi?rm=obsolete_treeview_json&release=[% active_release %][% treeview_params %]'
+	});
+	
+	//Build the typedef tree
+	$("#treeview_typedefs").treeview({
+	    url: '/[% cgi_path %]/obob.cgi?rm=typedefs_treeview_json&release=[% active_release %][% treeview_params %]'
+	});
+
+	//This is a hack which I'd like to get rid of
+	//It sets the selected term to green in the treeview
+	//and is necessary because without the timeout
+	//it won't wait until the tree is built to run, and
+	//then there is nothing to turn green when it runs.
+	//It won't work if the tree takes more than 3 seconds to build.
+        setTimeout('$("li[ID=[% term.acc %]] > span > a").attr({style: "color: green; font-size: 1.2em"})', 300);
+    $('#obo_query').autocomplete('/[% cgi_path %]/obob.cgi', { extraParams:  { rm:      'autocomplete',
+                                                                       release: function() { return $("#release").val(); }},
+                                                       formatResult: formatResult  });
+});
+
+       $("#treeview_async a").click(function(event){
+              //$("#left_column").load(this.href);
+              return false;
+       }); 
+
+
+function formatResult(row) {
+    display = row[0];
+    display = display.replace(/(<.+?>)/gi, '');
+    display = display.replace(/(\[.+?\])/gi, '');
+    display = display.replace(/^\s+|\s+$/g, '');
+    return display;
+}
+</script>
+
+[% body_inf %]
+
+[% END %]

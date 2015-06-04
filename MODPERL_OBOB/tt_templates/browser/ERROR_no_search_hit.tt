@@ -1,0 +1,63 @@
+[% WRAPPER main.tt term_name = termname %]
+
+[% IF term %]
+  [% treeview_params = treeview_params _ "&term_acc=" _ term.acc %]
+[% END %]
+
+<script type="text/javascript">
+$(document).ready(function(){
+	//Build the main treeview 
+	$("#treeview_async").treeview({
+	    url: '/[% cgi_path %]/obob.cgi?rm=async_treeview_json&release=[% active_release %][% treeview_params %]',
+	});
+
+	//Build the obsolete terms tree
+	$("#treeview_obsolete").treeview({
+	    url: '/[% cgi_path %]/obob.cgi?rm=obsolete_treeview_json&release=[% active_release %][% treeview_params %]'
+	});
+	
+	//Build the typedef treeview 
+	$("#treeview_typedefs").treeview({
+	    url: '/[% cgi_path %]/obob.cgi?rm=typedefs_treeview_json&release=[% active_release %][% treeview_params %]'
+	});
+
+	//This is a hack which I'd like to get rid of
+	//It sets the selected term to green in the treeview
+	//and is necessary because without the timeout
+	//it won't wait until the tree is built to run, and
+	//then there is nothing to turn green when it runs.
+	//It won't work if the tree takes more than 3 seconds to build.
+        setTimeout('$("li[ID=[% term.acc %]] > span > a").attr({style: "color: green; font-size: 1.2em"})', 300);
+
+    $('#obo_query').autocomplete('/[% cgi_path %]/obob.cgi', { extraParams:  { rm:      'autocomplete',
+                                                                       release: function() { return $("#release").val(); }},
+                                                       formatResult: formatResult  });
+});
+
+function formatResult(row) {
+    display = row[0];
+    display = display.replace(/(<.+?>)/gi, '');
+    display = display.replace(/(\[.+?\])/gi, '');
+    display = display.replace(/^\s+|\s+$/g, '');
+    return display;
+}
+
+</script>
+
+<h2>Your search returned no results.</h2>
+
+<br />
+
+<p>
+Please try one of the following methods to find the term you are interested in:
+</p>
+
+<ul>
+  <li>Check the spelling of your query and try your search again.</li>
+  <li>Shorten your query to see if you get a list of matches to partial term names.
+  <li>Try using a synonym of the term you are searching for.
+  <li>Use the expandable tree on the left side of the page to browse the terms.</li>
+</ul>
+
+[% END %]
+

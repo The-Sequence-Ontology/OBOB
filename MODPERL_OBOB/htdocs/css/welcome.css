@@ -1,0 +1,24 @@
+#mycontent {
+	background-image:url(../img/obob_header_2.jpg);
+	height:189px;
+	opacity:0.8377362;
+	width:994px;
+	position:relative;
+	float:none;
+	margin-left:auto;
+	margin-right:auto;
+	display:block;
+	left:0;
+	top:21px;
+}
+
+body {
+	background-image:url(../img/obob_image.png);
+	opacity:0.9800146;
+	font:inherit;
+	font-family:inherit;
+}
+
+.mystyle {
+}
+

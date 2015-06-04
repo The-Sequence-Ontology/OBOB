@@ -1,0 +1,8 @@
+@import url(/css/main_style.css);
+
+body {
+     background: #eef3f9 url('../img/obob_image.png') top left fixed;
+     font-family: Verdana, Arial, Helvetica, Sans-Serif;
+     font-size: 75%;
+     margin: 15px 0 15px 0;
+}

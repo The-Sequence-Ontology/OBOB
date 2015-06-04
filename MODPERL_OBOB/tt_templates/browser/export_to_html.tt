@@ -1,0 +1,72 @@
+[%- FOREACH term = sub_graph.get_all_nodes %]
+<table class='so_table'>
+<thead>
+    <tr>
+    <th colspan="2"><h2>[% term.name | upper %]</h2></th>
+  </tr>
+</thead>
+<tbody>
+    <tr>
+    <th class='so_acc'>OBO Accession: </th>
+    <td class='so_acc'>[% term.acc %][%- IF wiki_path %] <a href="[% wiki_path %][% term.acc %]_%21_[% term.name %]">(Wiki)</a>[% END %]</td>
+  </tr>
+    <tr>
+    <th class='so_def'>Definition: </th>
+    <td class='so_def'>[% term.definition %]</td>
+  </tr>
+  [%- IF term.synonym_list.size > 0 %]
+  </tr>
+  <tr>
+    <th class='so_syn'>Synonyms: </th>
+    <td class='so_syn'>[% term.synonym_list.join(', ') %]</td>
+  </tr>
+  [%- END %]
+  [%- IF link_list.size > 0 %]
+     [%- FOR link = link_list %]
+  <tr>
+        [%- IF loop.first %]
+    <th class='so_xref' rowspan="[% link_list.size %]">DB Xrefs: </th>
+        [%- END %]
+    <td class='so_xref'>[% link.xref_dbname  %]:
+        [%- FOREACH pair IN link.web.pairs %]
+           [%- IF pair.value  %]
+                <a href="[% pair.value %]">[% pair.key %]</a>&nbsp;&nbsp;
+           [%- ELSE %]
+                [% pair.key %]
+           [%- END %]
+        [%- END %]
+        </td> 
+        </tr> 
+     [%- END %]
+  [%- END %]
+  [%- IF obo_graph.get_parent_terms(term.acc).size > 0 %]
+  <tr>
+    <td class='so_space' colspan="2"><br /></td>
+  </tr>
+  [%- FOR parent = obo_graph.get_parent_terms(term.acc) %]
+  <tr>
+    [%- IF loop.first %]
+    <th class='so_parent' rowspan="[% parents.size %]">[% IF parents.size > 1 %]Parents[% ELSE %]Parent[% END %]: </th>
+    [%- END %]
+    <td class='so_parent'>[% parent.name %] (<a href="[% server_url %]/[% cgi_path %]/[% active_release %]/term/[% parent.acc %]">[% parent.acc %]</a>)</td>
+  </tr>
+  [%- END %]
+  [%- END %]
+  [%- IF obo_graph.get_child_terms(term.acc).size > 0 %]
+  <tr>
+    <td class='so_space' colspan="2"><br /></td>
+  </tr>
+  [%- FOR child = obo_graph.get_child_terms(term.acc) %]
+  <tr>
+    [%- IF loop.first %]
+    <th class='so_child' rowspan="[% children.size %]">[% IF children.size > 1 %]Children[% ELSE %]Child[% END %]: </th>
+    [%- END %]
+    <td class='so_child'>[% child.name %] (<a href="[% server_url %]/[% cgi_path %]/[% active_release %]/term/[% child.acc %]">[% child.acc %]</a>)</td>
+  </tr>
+  [%- END %]
+  [%- END %]
+</tbody>
+</table>
+
+
+[% END %]

@@ -1,0 +1,230 @@
+[% WRAPPER main.tt term = term %]
+
+[% USE Dumper %]
+
+
+[% IF term %]
+  [% treeview_params = treeview_params _ "&term_acc=" _ term.acc %]
+[% END %]
+
+[% Dumper.dump(synonym_list) %]
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+        
+	//Build the main treeview
+       $("#treeview_async").treeview({
+            url: '/[% cgi_path %]/obob.cgi?rm=async_treeview_json&release=[% active_release %][% treeview_params %]',
+        });
+
+        //Build the obsolete terms tree
+        $("#treeview_obsolete").treeview({
+            url: '/[% cgi_path %]/obob.cgi?rm=obsolete_treeview_json&release=[% active_release %][% treeview_params %]'
+        });
+
+        //Build the typedef treeview
+        $("#treeview_typedefs").treeview({
+            url: '/[% cgi_path %]/obob.cgi?rm=typedefs_treeview_json&release=[% active_release %][% treeview_params %]'
+        });
+
+        //This is a hack which I'd like to get rid of
+        //It sets the selected term to green in the treeview
+        //and is necessary because without the timeout
+        //it won't wait until the tree is built to run, and
+        //then there is nothing to turn green when it runs.
+        //It won't work if the tree takes more than 3 seconds to build.
+        setTimeout('$("li[ID=[% term.acc %]] > span > a").attr({style: "color: green; font-size: 1.2em"})', 300);
+    $('#obo_query').autocomplete('/[% cgi_path %]/obob.cgi', { extraParams:  { rm:      'autocomplete',
+                                                                       release: function() { return $("#release").val(); }},
+	                                                      formatResult: formatResult  });
+});
+
+function formatResult(row) {
+    display = row[0];
+    display = display.replace(/(<.+?>)/gi, '');
+    display = display.replace(/(\[.+?\])/gi, '');
+    display = display.replace(/^\s+|\s+$/g, '');
+    return display;
+}
+</script>
+
+<!-- ##############################  Export Bar  ############################## -->
+
+<div id='export_bar'>
+</div>
+
+<!-- ##############################  Main Data Table  ############################## -->
+
+<form method="post" action="[% cgi_path %]/obob.cgi">
+<input type="hidden" name="rm" value="export_form" />
+<input type="hidden" name="term_acc" value="[% term.acc %]" />
+<input type="hidden" name="release" value="[% active_release %]">
+<select id="graph_type" name="graph_type">
+  <option value="term_only" selected="selected">Term Only</option>
+  <option value="term_with_children">Term with Children</option>
+  <option value="term_with_parents">Term with Parents</option>
+  <option value="term_with_parents_children">Term with Parents &amp; Children</option>
+  <option value="complete_term_graph">Complete Term Graph</option>
+</select>
+
+as
+
+<select id="format" name="format">
+  <option value="obo" selected="selected">OBO Format</option>
+  <option value="html_table">HTML Table</option>
+  <option value="csv_text">Tab Delimited Text</option>
+</select>
+
+<input type="submit" value="Export" />
+
+</form>
+
+<table>
+<thead>
+  <tr>
+    <th colspan="2"><h2>[% term.name | upper %] &nbsp;&nbsp; ([% active_release | upper %])</h2></th>
+  </tr>
+</thead>
+<tbody>
+
+ <tr>
+    <th>OBO Accession: </th>
+    <td>[% term.acc %]</td>
+  </tr>
+
+  <tr>
+    <th>Definition: </th>
+    <td>[% term.definition %]</td>
+  </tr>
+
+
+  [% IF link_list.size > 0 %]
+     [% FOR link = link_list %]
+        <tr>
+        [% IF loop.first %]
+        <th rowspan="[% link_list.size %]">Definition dbxref:</th>
+        [% END %]
+
+        <td>[% link.xref_dbname %]:
+        [% FOREACH pair IN link.tag.pairs %]    
+           [% IF pair.value  %]
+                [% pair.value %]
+           [% ELSE %]
+                [% pair.key %]
+           [% END %]
+        [% END %]       
+        </td> 
+        </tr>
+     [% END %]
+  [% END %]
+
+
+  [% IF term.synonym_list.size > 0 %]
+  <tr>
+    <th>Synonyms: </th>
+    <td>[% term.synonym_list.join('; ') %]</td>
+  </tr>
+  [% END %]
+
+
+  [% IF term.comment.size > 0 %]
+  <tr>
+    <th>Comment: </th>
+    <td>[% term.comment %]</td>
+  </tr>
+  [% END %]
+
+[% IF xref_list.size  %]
+     <th rowspan="[% (xref_list.size / 2) + 1  %]">Term Data: </th>
+     [% FOR dbxref = xref_list.unique.sort  %]
+        <tr>
+	<td>
+	[% IF dbxref.match('(HGNC_gene:(.+))') %]
+	       <b> Gene Info: </b> <font color="DarkGreen">[% dbxref%]</font color="DarkGreen">
+		[% NEXT %]
+	   [% END %]
+	[% IF dbxref.match('(transitive_HGNC_gene:(.+))') %]
+               <b> Gene Info: </b> <font color="DarkGreen">[% dbxref%]</font color="DarkGreen">
+                [% NEXT %]
+           [% END %]
+	[% IF dbxref.match('(URL:http.+)') %]
+		<b> External: </b>
+           [% FOREACH dir IN dbxref.split('URL:') %]
+		<a href="[% dir %]" target="_blank">[% dir %]</a>
+	   [% END %]
+	   [% NEXT %]
+        [% ELSE %]
+	   <b>DBxref Data:</b> <font color="DarkSlateBlue">[% dbxref %]</font color="DarkSlateBlue">
+	[% END %]
+	</td>
+        </tr>
+     [% END %]
+  [% END %]
+
+
+ [% IF parents.size > 0 %]
+  <tr>
+    <td colspan="2"><br /></td>
+  </tr>
+  [% FOR parent = parents %]
+  <tr>
+    [% IF loop.first %]
+    <th rowspan="[% parents.size %]">[% IF parents.size > 1 %]Parents[% ELSE %]Parent[% END %]: </th>
+    [% END %]
+    <!-- this line needed to be changed from obob to browser for the links to work correctly -->
+    <!-- <td>[% parent.name %] (<a href="/obob/[% active_release %]/term/[% parent.acc %]">[% parent.acc %]</a>)</td> -->
+    <td>[% parent.name %] (<a href="/browser/[% active_release %]/term/[% parent.acc %]">[% parent.acc %]</a>)</td>
+  </tr>
+  [% END %]
+  [% END %]
+
+
+  [% IF children.size > 0 %]
+  <tr>
+    <td colspan="2"><br /></td>
+  </tr>
+  [% FOR child = children %]
+  <tr>
+    [% IF loop.first %]
+    <th rowspan="[% children.size %]">[% IF children.size > 1 %]Children[% ELSE %]Child[% END %]: </th>
+    [% END %]
+    <!-- this line needed to be changed from obob to browser for the links to work correctly -->
+    <!--<td>[% child.name %] (<a href="/obob/[% active_release %]/term/[% child.acc %]">[% child.acc %]</a>)</td> -->
+    <td>[% child.name %] (<a href="/browser/[% active_release %]/term/[% child.acc %]">[% child.acc %]</a>)</td>
+  </tr>
+  [% END %]
+  [% END %]
+</tbody>
+</table>
+
+
+<!-- ##############################  Term Graphic  ############################## -->
+
+[% gif_map %]
+[% gif_normal_map %]
+ 
+<script type="text/javascript">
+   // When the page is ready
+   $(document).ready(function(){
+	$('#img_frame img').toggle(
+	function(){
+		$(this).attr({src: "[% gif_normal_link %]", usemap: '#large'});	
+	},
+	function(){
+		$(this).attr({src: "[% gif_link %]", usemap: '#small'});
+	});
+   });
+
+</script>
+
+<div class="note">
+  In the image below graph nodes link to the appropriate terms.  Clicking the image background will toggle the image between large and small formats.
+</div>
+
+<div id="img_frame">
+  <img src="[% gif_link %]" alt="Graph image for [% term.acc %]" usemap="#small" style="border-style: none" />
+</div>
+
+[% END %]
+

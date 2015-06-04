@@ -1,0 +1,4 @@
+Accession	Name	Definition	DB_Xrefs	Parents	Children
+[% FOREACH term = sub_graph.get_all_nodes -%]
+[% term.acc %]	[% term.name %]	[% term.definition %]	[% FOR parent =  obo_graph.get_parent_terms(term.acc) -%][% parent.acc %][% IF ! loop.last %],[% END %][% END %]	[% FOR child = obo_graph.get_child_terms(term.acc) %][% child.acc %][% IF ! loop.last %],[% END %][% END %]
+[% END -%]

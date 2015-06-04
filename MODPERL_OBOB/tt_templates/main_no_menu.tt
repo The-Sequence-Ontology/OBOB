@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<!-- Meta Data -->
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<meta name="keywords" content="Short description of page goes here." />
+<meta name="description" content="keywords, go, here, seperated, by, commas" />
+
+<!-- Stylesheet -->
+<link rel="stylesheet" href="/css/[% css_style %]" type="text/css" />
+<link rel="stylesheet" href="/css/jquery.autocomplete.css" type="text/css" />
+<link rel="stylesheet" href="/css/jquery.treeview.css" type="text/css" />
+<link rel="stylesheet" href="/css/jquery.tablesorter.css" type="text/css" />
+<link rel="stylesheet" href="/css/jquery.tooltip.css" type="text/css" />
+
+<!-- Override the main_content and left_colum widths for OBOB-->
+<style type="text/css">
+#main_content{
+     width: 100%;
+}
+</style>
+
+<!-- JavaScript -->
+<script src="/js/jquery-1.2.6.js" type="text/javascript"></script>
+<script src="/js/jquery-autocomplete/jquery.autocomplete.js" type="text/javascript"></script>
+<script src="/js/jquery-treeview/jquery.treeview.js" type="text/javascript"></script>
+<script src="/js/jquery-treeview/jquery.treeview.async.js" type="text/javascript"></script>
+<script src="/js/jquery.tablesorter.min.js" type="text/javascript"></script>
+<script src="/js/jquery-dimensions_1.2/jquery.dimensions.js" type="text/javascript"></script>
+<script src="/js/jquery-tooltip/jquery.tooltip.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+function change_release(){
+        [% IF term_name %]
+            $('#obo_query').val('[% term_name %]');
+        [% END %]
+        $('#form1').submit();
+}
+</script>
+
+<!-- Site Title -->
+<title>[% title %]</title>
+
+</head>
+
+<body>
+
+<div id="page_wrapper">
+
+<div id="header">
+<div id="header_h2">OBOB</div>
+<div id="header_h1">Open Biomedical Ontologies Browser</div>
+<div id="header_left">
+	
+</div>
+
+</div>
+
+<!-- ======================= BEGIN NAV BAR =========================== -->	
+
+
+<!-- ======================== END NAV BAR _=========================== -->	
+
+<div id="breadcrumb">
+<form method="post" action="/[% cgi_path %]/obob.cgi" id="form1">
+
+<p>
+<input type="hidden" name="rm" value="term_list" />
+Search for Terms:
+&nbsp;
+<input type="text" id="obo_query" name="obo_query" />
+<input type="submit" value="Search"/>
+Select Release:
+&nbsp;
+&nbsp;
+<select name="release" id="release" Onchange="change_release()">
+  [% FOR release = releases %]
+    <option value="[% release %]" [% IF release == active_release %] selected="selected"[% END %]>[% release | ucfirst | replace('_', ' ')  %]</option>
+  [% END %]
+</select>
+<div id="so_list" class="autocomplete"></div>
+</p>
+</form>
+
+</div>
+
+<div id="content_wrapper">
+
+<!-- ==================== BEGIN MAIN CONTENT AREA ====================== -->	
+
+<div id="main_content">
+<div class="main_padding">
+
+[% content %]
+
+<!-- ==================== END MAIN CONTENT AREA ====================== -->	
+
+</div> <!-- inner_padding -->
+</div> <!-- main_content -->
+</div> <!-- content_wrapper -->
+
+<div class="spacer"></div>
+
+<div id="footer">
+
+<p>
+    [% footer %]
+</p>
+
+</div>
+
+</div> <!-- page_wrapper -->
+
+</body>
+
+</html>

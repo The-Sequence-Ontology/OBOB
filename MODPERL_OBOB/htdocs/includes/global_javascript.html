@@ -1,0 +1,52 @@
+<script type="text/javascript">
+//When the document is ready
+$(document).ready(function(){
+
+  // Toggle Menus
+
+  //First hide the ul elements
+  $('#left_column ul').hide();
+  //If the Header is clicked toggle display
+  //of the following ul
+  $('#left_column h4').not('.toggle_menu').click(
+    function() {
+      $(this).next('ul').toggle();
+    });
+  //If the link with class='toggle_menu'
+  //is clicked, alternate between showing
+  //and hiding all of the ul elements.
+  $('a.toggle_menu').toggle(
+    function(){
+      $('#left_column ul').show();
+    },
+    function(){
+      $('#left_column ul').hide();
+    });
+
+  // Solve the problem of unequal height columns.
+  // Thanks to the Filament Group 
+  // http://www.filamentgroup.com/lab/setting_equal_heights_with_jquery
+
+  $('#content_wrapper').equalHeights();
+
+// jQuery Suckerfish Drop Downs
+
+$("#navlist li").hover(
+    function(){ $("ul", this).fadeIn("fast"); },
+    function() { }
+);
+if (document.all) {
+    $("#navlist li").hoverClass ("sfHover");
+}
+
+$.fn.hoverClass = function(c) {
+    return this.each(function(){
+        $(this).hover(
+            function() { $(this).addClass(c);  },
+            function() { $(this).removeClass(c); }
+        );
+    });
+};
+
+});
+</script>

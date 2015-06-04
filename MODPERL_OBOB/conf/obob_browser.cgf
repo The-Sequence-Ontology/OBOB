@@ -1,0 +1,137 @@
+# This configuration file defines how the OBOB Browser behaves.
+
+#-------------------------------------------------------------------------------
+
+# The <browser> section defines URLs, paths, servers and settings used by OBOB
+# Browser
+
+<browser>
+        #server_url:
+        server_url = www.obobrowser.org
+
+        # cgi_path: The file system path for cgi programs associated with the browser
+        cgi_path = browser
+        # term_url_base_dir
+        url_base_dir = browser
+
+        # img_url: The URL for images used by the browser
+        img_url = http://www.obobrowser.org/img/dag_gif/obob
+
+        # img_path: The file system path for images used by the browser
+        img_path = /home/srynearson/OBOB/MODPERL_OBOB/htdocs/img/dag_gif/obob
+
+        # term_redirect_url: The URL for persistent term URLs (note
+        # this in combination with redirects in apache's httpd.conf redirect
+        # term names directly to their detail page)	        
+	
+	term_redirect_url = /browser
+	#term_redirect_url = http://obobrowser.org/browser/cgi-bin
+
+        # tmp_path: The file system path where tmp file should
+        # be written.
+        tmp_path = /home/srynearson/OBOB/MODPERL_OBOB/tt_templates:/home/srynearson/OBOB/MODPERL_OBOB/tt_templates/browser:
+
+	# wiki_path:
+	wiki_path = 
+	
+	#menu_bar/
+	menu_bar = nav_bar.html
+	
+	#css style
+	css_style = obob_style.css
+	
+	#footer
+	footer = Copyright &copy; 2012 Sequence Ontology. All rights reserved.<br>OBOB was developed by the <a href="http://www.sequenceontology.org" target="_blank">Sequence Ontology</a> via a grant from the NHGRI (R01HG004341).</br>
+	
+	#body_inf
+	body_inf = <h3>Welcome to OBOB, the OBO Browser</h3><p>This is a generic browser for ontologies that use <a href="http://www.geneontology.org/GO.format.obo-1_2.shtml\">OBO format</a>.</p><ul><li>Search for an ontology term by entering the term name or synonym in the query box above;</li><li>Explore the structure of ontology and browse for terms using the expandable, cascading tree on the left;</li><li>Go to the detail page for a term where you can:</li><ul><li>Get details about a term, it's definition and relationships;</li><li>See graphical views of a term's place in the ontology and link to it's neighbors;</li></ul></ul> <p><h3>Viewing your own OBO file</h3><p><ul><li>Registered users can upload personal files.  Files must be in OBO formats, including file names.</li> <p><li>Uploaded files can be viewed by changing the Select Release version.  Files will be deleted daily.</li><p><li>To register click the Upload file link.</li><li>If you would like a version of OBOB you can find it here.</li></ul>
+
+</browser>
+
+#-------------------------------------------------------------------------------
+
+# The <ontology_data> section contains the various ontology files.
+<ontology_data>
+
+	#<ontology_file_path> 
+	file_path = /home/srynearson/OBOB/MODPERL_OBOB/data/obo_files
+
+	#</ontology_file_path>
+	file_pattern_match = *.obo
+
+	# obo_xp_path: The path to cross-product obo files
+	#obo_xp_path = /home/srynearson/OBOB/MODPERL_OBOB/data/obo_xp_files
+
+        # obo_extension: The file extension used on obo files
+        obo_extension = obo
+
+	# use_release: You can specify (multiple) specific releases to use.  
+	# The names here should correspond to the file names of the of the
+	# release files with the extension (e.g. ".obo") and path removed.
+	# use_release = 
+
+	# default_release: specify which release should be used by default
+	default_release = goslim_yeast.obo
+	# default_release = current_release
+
+</ontology_data>
+
+#-------------------------------------------------------------------------------
+
+# The graph section controls the behavior of the Graph.pm module which generates
+# the the graphical views of the OBO data.
+<graph>
+
+	# graph_root_node: This will define the node for...??
+	graph_root_node = SO:0000000
+
+	# focus_font_color: The font color to use for the focus term in the
+	# graph
+	focus_font_color = black
+
+	# focus_fill_color: The background color to use for the focus term in
+	# the graph
+	focus_fill_color = red
+
+	# term_font_color: The font color to use for general terms in the graph
+	term_font_color = black
+
+	# term_fill_color: The background color to use for general terms in the
+	# graph
+	term_fill_color = white
+
+	# diff_font_color: The font color to use for differentia terms in the graph
+	diff_font_color = black
+
+	# diff_fill_color: The background color to use for differentia terms in
+	# the graph
+	diff_fill_color = green
+
+	# parents_fill_color
+	parents_fill_color = black
+	
+	# parents_font_color
+	parents_font_color = white
+
+	# children_fill_color
+	children_fill_color = white 
+
+	# children_font_color 
+	children_font_color = black
+</graph>
+
+#-------------------------------------------------------------------------------
+
+# The <dbxrefs> section maps OBO dbxrefs to urls so that links to the xrefs can
+# be displayed in the browser.
+
+<dbxrefs>
+	<url_map>
+		ISBN = http://www4.bookbutler.com/do/bookSearch?searchBy=isbn&searchIn=us&sortBy=salesran\
+k&amountIn=usd&shipTo=us&showMore=true&pageNr=1&searchFor=
+		CHEBI = http://www.ebi.ac.uk/chebi/searchId.do?chebiId=
+		PMID = http://www.ncbi.nlm.nih.gov/sites/entrez/
+	</url_map>
+</dbxrefs>
+
+#-------------------------------------------------------------------------------

@@ -1,0 +1,74 @@
+[% WRAPPER main_no_menu.tt term_name = termname %]
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+        $("#list_table").tablesorter({widgets:['zebra']}); 
+   
+    	$('#obo_query').autocomplete('/[% cgi_path %]/obob.cgi', { extraParams:  { rm:      'autocomplete',
+                                                                       release: function() { return $("#release").val(); }},
+                                                       formatResult: formatResult  });
+}); 
+
+function formatResult(row) {
+    display = row[0];
+    display = display.replace(/(<.+?>)/gi, '');
+    display = display.replace(/(\[.+?\])/gi, '');
+    display = display.replace(/^\s+|\s+$/g, '');
+    return display;
+}
+</script>
+
+<script type="text/javascript">
+  $(function() {
+  $('a').tooltip({
+	delay: 0,
+	showURL: false,
+	opacity: 1,
+	showBody: " - ",
+      });
+  });
+</script>
+
+<table id="list_table" class='list_table tablesorter'>
+  <thead>
+  <tr>
+    <th>
+      Term ID
+    </th>
+    <th>
+      Term Name
+    </th>
+    <th>
+      Term Synonyms
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+  [% FOREACH match=list %]
+  <tr>
+    <td><a title="[% match.term.name %] - [% match.term.definition %]" href="/[% cgi_path %]/[% active_release %]/term/[% match.id %]">[% match.id %]</a></td>
+    <td>
+	[%- IF match.term.name.length > 50 -%]
+		[%- match.term.name.substr(47, match.term.name.length - 47, '...') -%]
+	[%- ELSE -%]
+		[%- match.term.name -%]
+	[%- END -%]
+    </td>
+    [%- synonym_list = [] -%]
+    [%- FOREACH synonym = match.term.synonym_list -%]
+	[%- IF synonym.length > 50 -%]
+		[%- synonym_list.push(synonym.substr(47, synonym.length - 47, '...')) -%]
+	[%- ELSE -%]
+		[%- synonym_list.push(synonym) -%]
+	[%- END -%]
+    [%- END %]	
+    <td>
+      [%- synonym_list.join(', ') -%]
+    </td>
+  </tr>
+  [% END %]
+  </tbody>
+</table>
+
+[% END %]
+

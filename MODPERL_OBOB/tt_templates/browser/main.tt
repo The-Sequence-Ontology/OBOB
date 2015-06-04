@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<!-- Meta Data -->
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<meta name="keywords" content="Short description of page goes here." />
+<meta name="description" content="keywords, go, here, seperated, by, commas" />
+
+<!-- Stylesheet -->
+<link rel="stylesheet" href="/css/[% css_style %]" type="text/css" />
+<link rel="stylesheet" href="/css/jquery.autocomplete.css" type="text/css" />
+<link rel="stylesheet" href="/css/jquery.treeview.css" type="text/css" />
+<link rel="stylesheet" href="/css/jquery.tooltip.css" type="text/css" />
+
+<!-- Override the main_content and left_colum widths for OBOB-->
+<style type="text/css">
+#main_content{
+     width: 65%;
+}
+
+#left_column {
+     width: 30%;
+}
+</style>
+
+<!-- JavaScript -->
+
+<script src="/js/jquery-1.2.6.js" type="text/javascript"></script>
+<script src="/js/jquery-autocomplete/jquery.autocomplete.js" type="text/javascript"></script>
+<script src="/js/jquery-treeview/jquery.treeview.js" type="text/javascript"></script>
+<script src="/js/jquery-treeview/jquery.treeview.async.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+function change_release(){
+	[% IF term %]
+		$('#obo_query').val('[% term.name %]');
+        [% END %]
+	$('#form1').submit();
+}
+</script>
+
+<!-- Site Title -->
+[% IF term %]
+  [% treeview_params = "&term_acc=" _ term.acc %]
+[% END %]
+
+
+<title>OBOB - The Open Biomedical Ontologies Browser[% IF term %] - [% term.name | upper %][% END %]</title>
+</head>
+
+<body>
+
+<div id="page_wrapper">
+
+<div id="header">
+<!--<div id="header_h2">OBOB</div>
+<div id="header_h1">Open Biomedical Ontologies Browser</div>-->
+</div>
+
+<!-- ======================= BEGIN NAV BAR =========================== -->	
+[% IF menu_bar %]
+<div id="menu_bar">
+<div id="navcontainer">
+
+[% INCLUDE $menu_bar %]
+
+</div>
+</div>
+[% END %]
+
+<!-- ======================== END NAV BAR _=========================== -->	
+
+<div id="breadcrumb">
+<form method="post" action="/[% cgi_path %]/obob.cgi" id="form1">
+     
+<p>
+<input type="hidden" name="rm" value="term_list" />
+Search for Terms:
+&nbsp;
+<input type="text" id="obo_query" name="obo_query" />
+<input type="submit"  value="Search"/>
+&nbsp;
+&nbsp;
+OBO File:
+&nbsp;
+
+<select name="release" id="release" Onchange="change_release()">
+[% FOR release = active_release %]
+ <option value="[% release %]"[% IF release == active_release %] selected="selected"[% END %]>[% release | upper | replace('_', ' ')  %]</option>
+[% END %]
+</select>
+
+
+<div id="so_list" class="autocomplete" onclick="alert('hello');"></div>
+</p>
+</form>
+</div>
+
+<div id="content_wrapper">
+
+<!-- ====================== BEGIN LEFT COLUMN ======================== -->	
+<div id="left_column">
+  <div class="column_padding">
+    <img src='/img/jquery.treeview/indicator.gif' alt="Spinner" style='display: block; width: 16px margins: auto;' /> 
+    <ul id="treeview_async">
+   </ul>
+    <hr />
+    <ul id="treeview_obsolete">
+    </ul>
+    <hr />
+    <ul id="treeview_typedefs">
+    </ul>
+  </div> <!-- column_padding -->
+</div>   <!-- left_column -->
+
+<!-- ======================= END LEFT COLUMN ======================== -->	
+
+<!-- ==================== BEGIN MAIN CONTENT AREA ====================== -->	
+
+<div id="main_content">
+<div class="main_padding">
+
+[% content %]
+
+<!-- ==================== END MAIN CONTENT AREA ====================== -->	
+
+</div> <!-- inner_padding -->
+</div> <!-- main_content -->
+</div> <!-- content_wrapper -->
+
+<div class="spacer"></div>
+
+<div id="footer">
+
+<p>
+    [% footer %]
+</p>
+
+</div>
+
+</div> <!-- page_wrapper -->
+
+</body>
+
+</html>
